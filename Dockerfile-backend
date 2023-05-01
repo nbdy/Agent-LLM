@@ -1,23 +1,23 @@
-# Install FastAPI app dependencies
-FROM python:3.10-slim-buster AS base
+FROM python:3.10-slim-buster
+
+# Install package manager dependencies
+RUN apt-get update ; \
+    apt-get install -y --no-install-recommends git build-essential g++ libgomp1 git uvicorn
+
 WORKDIR /app
 COPY requirements.txt ./
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends git build-essential && \
-    apt-get install g++ -y && \
-    pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install --force-reinstall --no-cache-dir hnswlib && \
-    apt-get remove -y git build-essential && \
-    apt-get install libgomp1 -y && \
-    apt-get install git -y && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
 
-#Run FastAPI app with Uvicorn
-FROM scratch AS uvicorn
-COPY --from=base / /
-WORKDIR /app
-COPY . .
-EXPOSE 7437
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7437"]
+# Install pip requirements
+RUN pip install --upgrade pip ; \
+    pip install --no-cache-dir -r requirements.txt ; \
+    pip install --force-reinstall --no-cache-dir hnswlib
+
+# Copy relevant files and directories
+COPY chains/ ./chains/
+COPY commands/ ./commands/
+COPY model-prompts/ ./model-prompts/
+COPY prompts/ ./prompts/
+COPY provider/ ./provider/
+COPY app.py AgentLLM.py Config.py Commands.py ./
+
+ENTRYPOINT ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7437"]
