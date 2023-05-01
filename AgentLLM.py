@@ -1,20 +1,21 @@
+import argparse
 import importlib
+import json
+import re
 import secrets
 import string
-import argparse
-import re
-import spacy
 from collections import deque
+from json.decoder import JSONDecodeError
 from typing import List, Dict
+
 import chromadb
+import spacy
 from chromadb.utils import embedding_functions
+from spacy.cli import download
+
+from Commands import Commands
 from Config import Config
 from commands.web_requests import web_requests
-from Commands import Commands
-import json
-from json.decoder import JSONDecodeError
-import spacy
-from spacy.cli import download
 
 try:
     nlp = spacy.load("en_core_web_sm")
@@ -28,7 +29,7 @@ class AgentLLM:
     def __init__(self, agent_name: str = "default", primary_objective=None):
         self.CFG = Config(agent_name)
         self.primary_objective = (
-            self.CFG.OBJECTIVE if primary_objective == None else primary_objective
+            self.CFG.OBJECTIVE if primary_objective is None else primary_objective
         )
         self.initialize_task_list()
         self.commands = Commands(agent_name)
@@ -323,7 +324,7 @@ class AgentLLM:
             self.task_list.append({"task_id": 1, "task_name": "Develop a task list."})
         self.stop_running_event = stop_event
         while not stop_event.is_set():
-            if self.task_list == []:
+            if not self.task_list:
                 break
             if len(self.task_list) > 0:
                 task = self.task_list.popleft()
