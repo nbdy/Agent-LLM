@@ -35,3 +35,4 @@ webdriver_manager
 pyllamacpp==1.0.7
 spacy
 discord
+git+https://github.com/nbdy/nomic # until #150 is merged
