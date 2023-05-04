@@ -27,9 +27,9 @@ services:
       - "127.0.0.1:21002:21002"
       - "127.0.0.1:7500:7500"
     volumes:
-      # - /media/safe/dl/llama-7b-hf:/model/llama-7b-hf
-      - /media/safe/dl/vicuna-7b-1.1:/model/vicuna-7b-1.1
-      # - /media/safe/dl/fastchat-t5-3b-v1.0:/model/fastchat-t5-3b-v1.0
+      # - /local/path/to/llama-7b-hf:/model/llama-7b-hf
+      - /local/path/to/vicuna-7b-1.1:/model/vicuna-7b-1.1
+      # - /local/path/to/fastchat-t5-3b-v1.0:/model/fastchat-t5-3b-v1.0
     deploy:
       resources:
         reservations:
@@ -50,6 +50,6 @@ services:
     volumes:
       - ./data/agents:/app/agents:rw
       - ./data/workspace:/app/WORKSPACE:rw
-      #- ./models:/model:rw
+      # - ./models:/model:rw
     depends_on:
       - fastchat
