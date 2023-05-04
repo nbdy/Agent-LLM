@@ -12,6 +12,32 @@ services:
     depends_on:
       - backend
 
+  fastchat:
+    build:
+      dockerfile: Dockerfile-fastchat
+    environment:
+      FASTCHAT_DEVICE: "cpu"
+      MODEL_NAME: "vicuna-7b-1.1"
+      MODEL_PATH: "/model/vicuna-7b-1.1"
+      # or to use another model:
+      # MODEL_NAME: "fastchat-t5-3b-v1.0"
+      # MODEL_PATH: "/model/fastchat-t5-3b-v1.0"
+    ports:
+      - "127.0.0.1:21001:21001"
+      - "127.0.0.1:21002:21002"
+      - "127.0.0.1:7500:7500"
+    volumes:
+      # - /media/safe/dl/llama-7b-hf:/model/llama-7b-hf
+      - /media/safe/dl/vicuna-7b-1.1:/model/vicuna-7b-1.1
+      # - /media/safe/dl/fastchat-t5-3b-v1.0:/model/fastchat-t5-3b-v1.0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
   backend:
     build:
       context: .
@@ -24,4 +50,6 @@ services:
     volumes:
       - ./data/agents:/app/agents:rw
       - ./data/workspace:/app/WORKSPACE:rw
-      - ./models:/model:rw
+      #- ./models:/model:rw
+    depends_on:
+      - fastchat
