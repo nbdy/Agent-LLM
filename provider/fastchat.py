@@ -18,10 +18,6 @@ class AIProvider:
                 "User-Agent": "curl/7.54"  # the default causes a httpx.ReadTimeout exception?!
             }
         )
-        print(response.request.__dict__)
         if response.ok:
-            print(response.request.body)
-            print(response.json())
-            return response.json()["data"][0].replace("\n", "\n")
-        print("Response not OK")
+            return response.json()["choices"][0]["message"]["content"]
         return "ERROR"
